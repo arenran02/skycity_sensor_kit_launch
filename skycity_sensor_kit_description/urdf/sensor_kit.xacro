@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--
+    sensor_kit_macro:
+    - parent: 붙일 부모 링크 (보통 base_link)
+    - x, y, z, roll, pitch, yaw: parent -> sensor_kit_base_link 변환
+  -->
+  <xacro:macro name="sensor_kit_macro" params="parent x y z roll pitch yaw">
+
+    <!-- skycity용 config 경로 -->
+    <xacro:arg name="config_dir" default="$(find skycity_sensor_kit_description)/config"/>
+
+    <!-- 센서 키트 기준 링크 이름 -->
+    <xacro:property name="sensor_kit_base_link" default="sensor_kit_base_link"/>
+
+    <!-- parent -> sensor_kit_base_link 고정 조인트 -->
+    <joint name="${sensor_kit_base_link}_joint" type="fixed">
+      <origin rpy="${roll} ${pitch} ${yaw}" xyz="${x} ${y} ${z}"/>
+      <parent link="${parent}"/>
+      <child link="${sensor_kit_base_link}"/>
+    </joint>
+
+    <link name="${sensor_kit_base_link}">
+      <!-- 필요하면 inertial/visual/collision 추가 가능, 일단 생략 -->
+    </link>
+
+    <!-- 센서 위치/자세 calibration 로드 -->
+    <xacro:property name="calibration"
+                    value="${xacro.load_yaml('$(arg config_dir)/sensor_kit_calibration.yaml')}"/>
+
+    <!-- ===========================
+         LiDAR (hesai_lidar)
+         =========================== -->
+    <link name="hesai_lidar"/>
+
+    <joint name="hesai_lidar_joint" type="fixed">
+      <parent link="${sensor_kit_base_link}"/>
+      <child link="hesai_lidar"/>
+      <origin
+        xyz="${calibration['sensor_kit_base_link']['hesai_lidar']['x']}
+             ${calibration['sensor_kit_base_link']['hesai_lidar']['y']}
+             ${calibration['sensor_kit_base_link']['hesai_lidar']['z']}"
+        rpy="${calibration['sensor_kit_base_link']['hesai_lidar']['roll']}
+             ${calibration['sensor_kit_base_link']['hesai_lidar']['pitch']}
+             ${calibration['sensor_kit_base_link']['hesai_lidar']['yaw']}"
+      />
+    </joint>
+
+    <!-- ===========================
+         IMU (imu_link)
+         =========================== -->
+    <link name="imu_link"/>
+
+    <joint name="imu_joint" type="fixed">
+      <parent link="${sensor_kit_base_link}"/>
+      <child link="imu_link"/>
+      <origin
+        xyz="${calibration['sensor_kit_base_link']['imu_link']['x']}
+             ${calibration['sensor_kit_base_link']['imu_link']['y']}
+             ${calibration['sensor_kit_base_link']['imu_link']['z']}"
+        rpy="${calibration['sensor_kit_base_link']['imu_link']['roll']}
+             ${calibration['sensor_kit_base_link']['imu_link']['pitch']}
+             ${calibration['sensor_kit_base_link']['imu_link']['yaw']}"
+      />
+    </joint>
+
+    <!-- ===========================
+         GPS (gps)
+         =========================== -->
+    <link name="gps"/>
+
+    <joint name="gps_joint" type="fixed">
+      <parent link="${sensor_kit_base_link}"/>
+      <child link="gps"/>
+      <origin
+        xyz="${calibration['sensor_kit_base_link']['gps']['x']}
+             ${calibration['sensor_kit_base_link']['gps']['y']}
+             ${calibration['sensor_kit_base_link']['gps']['z']}"
+        rpy="${calibration['sensor_kit_base_link']['gps']['roll']}
+             ${calibration['sensor_kit_base_link']['gps']['pitch']}
+             ${calibration['sensor_kit_base_link']['gps']['yaw']}"
+      />
+    </joint>
+
+  </xacro:macro>
+</robot>

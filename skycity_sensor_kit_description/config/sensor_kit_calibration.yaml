@@ -1,0 +1,24 @@
+sensor_kit_base_link:
+  hesai_lidar_base_link:   # LiDAR
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+  imu_link:                # IMU 프레임 이름 그대로
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+  gps:                     # GPS 프레임 이름 그대로
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
