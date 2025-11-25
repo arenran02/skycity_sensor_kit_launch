@@ -1,5 +1,5 @@
 sensor_kit_base_link:
-  hesai_lidar_base_link:   # LiDAR
+  hesai_lidar:             # LiDAR
     x: 0.0
     y: 0.0
     z: 0.0
